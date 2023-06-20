@@ -1,0 +1,12 @@
+[package]
+description = "A code path macro"
+edition = "2021"
+license = "MIT"
+name = "code-path"
+repository = "https://github.com/imbolc/code-path"
+version = "0.1.0"
+
+[dependencies]
+
+[dev-dependencies]
+rusty-hook = "0.11"
