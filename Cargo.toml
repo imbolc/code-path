@@ -4,7 +4,7 @@ edition = "2021"
 license = "MIT"
 name = "code-path"
 repository = "https://github.com/imbolc/code-path"
-version = "0.2.0"
+version = "0.3.0"
 
 [dependencies]
 
