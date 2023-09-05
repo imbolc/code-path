@@ -4,16 +4,13 @@
 //!
 //! ## Usage
 //! ```rust
-//! use code_path::code_path;
-//!
-//! fn foo() -> &'static str {
-//!     fn bar() -> &'static str {
-//!         code_path!()
+//! fn foo() -> String {
+//!     fn bar() -> String {
+//!         code_path::with_loc!()
 //!     }
 //!     bar()
 //! }
-//!
-//! assert_eq!(foo(), "rust_out::main::_doctest_main_src_lib_rs_6_0::foo::bar");
+//! assert_eq!(foo(), "rust_out::main::_doctest_main_src_lib_rs_6_0::foo::bar, src/lib.rs:7:9");
 //! ```
 
 #![warn(clippy::all, missing_docs, nonstandard_style, future_incompatible)]
@@ -33,6 +30,22 @@ macro_rules! code_path {
         }
         name
     }};
+}
+
+/// Returns the code location
+#[macro_export]
+macro_rules! code_loc {
+    () => {
+        concat!(file!(), ":", line!(), ":", column!())
+    };
+}
+
+/// Returns the code location
+#[macro_export]
+macro_rules! with_loc {
+    () => {
+        format!("{}, {}", $crate::code_path!(), $crate::code_loc!())
+    };
 }
 
 #[cfg(test)]
@@ -58,5 +71,20 @@ mod tests {
             (|| (|| code_path!())())()
         }
         assert_eq!(foo(), "code_path::tests::ending_cloures::foo");
+    }
+
+    #[test]
+    fn with_loc() {
+        fn foo() -> String {
+            fn bar() -> String {
+                with_loc!()
+            }
+            bar()
+        }
+
+        assert_eq!(
+            foo(),
+            "code_path::tests::with_loc::foo::bar, src/lib.rs:80:17"
+        );
     }
 }

@@ -2,6 +2,7 @@
 pre-commit = """\
     cargo fmt -- --check \
     && cargo test --all-features --workspace --bins --examples --tests \
+    && cargo test --doc \
     && cargo clippy --all-features --workspace --bins --examples --tests -- -D warnings \
     && cargo sync-readme && git add README.md \
     && typos \

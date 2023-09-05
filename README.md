@@ -10,16 +10,13 @@ A code path macro
 
 ## Usage
 ```rust
-use code_path::code_path;
-
-fn foo() -> &'static str {
-    fn bar() -> &'static str {
-        code_path!()
+fn foo() -> String {
+    fn bar() -> String {
+        code_path::with_loc!()
     }
     bar()
 }
-
-assert_eq!(foo(), "rust_out::main::_doctest_main_src_lib_rs_6_0::foo::bar");
+assert_eq!(foo(), "rust_out::main::_doctest_main_src_lib_rs_6_0::foo::bar, src/lib.rs:7:9");
 ```
 
 <!-- cargo-sync-readme end -->
