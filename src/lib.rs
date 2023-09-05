@@ -23,7 +23,7 @@ use std::fmt;
 use std::ops::{Deref, DerefMut};
 
 /// Represents path in the code
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CodePath(String);
 
 impl fmt::Display for CodePath {
