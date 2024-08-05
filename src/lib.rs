@@ -1,6 +1,32 @@
 #![doc = include_str!("../README.md")]
 #![forbid(unsafe_code)]
-#![warn(clippy::all, missing_docs, nonstandard_style, future_incompatible)]
+#![deny(
+    clippy::all,
+    clippy::complexity,
+    clippy::expect_used,
+    clippy::indexing_slicing,
+    clippy::panic,
+    clippy::pedantic,
+    clippy::perf,
+    clippy::style,
+    clippy::suspicious,
+    clippy::todo,
+    clippy::unimplemented,
+    clippy::unwrap_used,
+    future_incompatible,
+    keyword_idents,
+    let_underscore,
+    missing_docs,
+    nonstandard_style,
+    refining_impl_trait,
+    rust_2018_compatibility,
+    rust_2018_idioms,
+    rust_2021_compatibility,
+    rust_2024_compatibility,
+    unreachable_pub,
+    unused
+)]
+#![warn(clippy::nursery)]
 use std::{
     fmt,
     ops::{Deref, DerefMut},
@@ -11,7 +37,7 @@ use std::{
 pub struct CodePath(String);
 
 impl fmt::Display for CodePath {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.0)
     }
 }
@@ -65,16 +91,14 @@ macro_rules! code_path {
 #[macro_export]
 macro_rules! code_scope {
     () => {{
-        fn f() {}
+        const fn f() {}
         fn type_name_of<T>(_: T) -> &'static str {
             ::std::any::type_name::<T>()
         }
-        let mut name = type_name_of(f);
-        name = &name[..name.len() - 3];
-        while name.ends_with("::{{closure}}") {
-            name = &name[..name.len() - 13];
-        }
-        name
+        type_name_of(f)
+            .strip_suffix("::f")
+            .unwrap_or_default()
+            .trim_end_matches("::{{closure}}")
     }};
 }
 
