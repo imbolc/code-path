@@ -1,23 +1,5 @@
-//! # code-path
-//!
-//! A code path macro
-//!
-//! ## Usage
-//! ```rust
-//! # use code_path::code_path;
-//!
-//! fn foo() {
-//!     fn bar() {
-//!         assert_eq!(
-//!             code_path!(),
-//!             "rust_out::main::_doctest_main_src_lib_rs_6_0::foo::bar, src/lib.rs:10:13".into(),
-//!         );
-//!     }
-//!     bar()
-//! }
-//! foo()
-//! ```
-
+#![doc = include_str!("../README.md")]
+#![forbid(unsafe_code)]
 #![warn(clippy::all, missing_docs, nonstandard_style, future_incompatible)]
 use std::fmt;
 use std::ops::{Deref, DerefMut};
