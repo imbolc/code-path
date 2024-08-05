@@ -5,8 +5,3 @@ license = "MIT"
 name = "code-path"
 repository = "https://github.com/imbolc/code-path"
 version = "0.3.1"
-
-[dependencies]
-
-[dev-dependencies]
-rusty-hook = "0.11"

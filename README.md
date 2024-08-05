@@ -23,12 +23,8 @@ foo()
 
 ## Contributing
 
-We appreciate all kinds of contributions, thank you!
-
-If you have [rusty-hook] installed the changes will apply automatically on commit.
+- please run [.pre-commit.sh] before sending a PR, it will check everything
 
 ## License
 
 This project is licensed under the [MIT license](LICENSE).
-
-[rusty-hook]: https://github.com/swellaby/rusty-hook
