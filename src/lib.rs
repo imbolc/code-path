@@ -1,8 +1,10 @@
 #![doc = include_str!("../README.md")]
 #![forbid(unsafe_code)]
 #![warn(clippy::all, missing_docs, nonstandard_style, future_incompatible)]
-use std::fmt;
-use std::ops::{Deref, DerefMut};
+use std::{
+    fmt,
+    ops::{Deref, DerefMut},
+};
 
 /// Represents path in the code
 #[derive(Debug, Clone, PartialEq, Eq)]
