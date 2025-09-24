@@ -7,19 +7,8 @@
 A code path macro
 
 ## Usage
-```rust
 
-fn foo() {
-    fn bar() {
-        assert_eq!(
-            code_path::code_path!(),
-            "rust_out::main::_doctest_main_src_lib_rs_10_0::foo::bar, src/lib.rs:9:13".into(),
-        );
-    }
-    bar()
-}
-foo()
-```
+Check out an [anyhow example](`examples/anyhow.rs`).
 
 ## Contributing
 

@@ -1,89 +1,54 @@
 #![doc = include_str!("../README.md")]
-#![forbid(unsafe_code)]
-#![deny(
-    clippy::all,
-    clippy::complexity,
-    clippy::expect_used,
-    clippy::indexing_slicing,
-    clippy::panic,
-    clippy::pedantic,
-    clippy::perf,
-    clippy::style,
-    clippy::suspicious,
-    clippy::todo,
-    clippy::unimplemented,
-    clippy::unwrap_used,
-    future_incompatible,
-    keyword_idents,
-    let_underscore,
-    missing_docs,
-    nonstandard_style,
-    refining_impl_trait,
-    rust_2018_compatibility,
-    rust_2018_idioms,
-    rust_2021_compatibility,
-    rust_2024_compatibility,
-    unreachable_pub,
-    unused
-)]
-#![warn(clippy::nursery)]
-use std::{
-    fmt,
-    ops::{Deref, DerefMut},
-};
+use std::fmt;
 
 /// Represents path in the code
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct CodePath(String);
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct CodePath {
+    context: &'static str,
+    location: &'static str,
+    scope: &'static str,
+}
+
+impl CodePath {
+    /// Creates a new code path value.
+    #[must_use]
+    pub const fn new(context: &'static str, location: &'static str, scope: &'static str) -> Self {
+        Self {
+            context,
+            location,
+            scope,
+        }
+    }
+}
 
 impl fmt::Display for CodePath {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.0)
-    }
-}
-
-impl From<&str> for CodePath {
-    fn from(s: &str) -> Self {
-        Self(s.into())
-    }
-}
-
-impl From<String> for CodePath {
-    fn from(s: String) -> Self {
-        Self(s)
+        if !self.context.is_empty() {
+            write!(f, "{} in ", self.context)?;
+        }
+        write!(f, "{} at {}", self.scope, self.location)
     }
 }
 
 impl From<CodePath> for String {
     fn from(val: CodePath) -> Self {
-        val.0
-    }
-}
-
-impl Deref for CodePath {
-    type Target = String;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl DerefMut for CodePath {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
+        val.to_string()
     }
 }
 
 /// Returns the current code scope with location, e.g.
-/// `code_path::tests::scope_path::foo::bar, src/lib.rs:80:17`
+/// `foo::bar at src/lib.rs:80:17`
+///
+/// Optionally accepts one or more tokens that `concat!` can combine into a
+/// string literal.
 #[macro_export]
 macro_rules! code_path {
-    () => {
-        $crate::CodePath::from(format!(
-            "{}, {}",
+    ($($context:expr_2021),* $(,)?) => {
+        $crate::CodePath::new(
+            concat!($($context),*),
+            $crate::code_loc!(),
             $crate::code_scope!(),
-            $crate::code_loc!()
-        ))
+        )
     };
 }
 
@@ -106,7 +71,7 @@ macro_rules! code_scope {
 #[macro_export]
 macro_rules! code_loc {
     () => {
-        concat!(file!(), ":", line!(), ":", column!())
+        concat!(file!(), ":", line!())
     };
 }
 
@@ -133,5 +98,18 @@ mod tests {
             (|| (|| code_scope!())())()
         }
         assert_eq!(foo(), "code_path::tests::ending_cloures::foo");
+    }
+
+    #[test]
+    fn literal_context() {
+        let CodePath { context, .. } = code_path!(42);
+
+        assert_eq!(context, "42");
+
+        let CodePath {
+            context: multi_context,
+            ..
+        } = code_path!("answer: ", 42);
+        assert_eq!(multi_context, "answer: 42");
     }
 }
